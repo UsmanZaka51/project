@@ -1,19 +1,124 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Face Recognition & Emotion Detection</title>
+  <meta charset="UTF-8" />
+  <title>Emotion Detection & Face Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0; padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      margin-bottom: 40px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .section-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #007BFF;
+      padding-bottom: 5px;
+    }
+    #face-form-response {
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <h2>Upload a Video for Face & Emotion Detection</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="video" accept=".mp4" required><br><br>
-        <input type="submit" value="Upload & Process">
+  <div class="container">
+    <h1>Emotion Detection & Face Registration</h1>
+
+    <!-- Video Upload Section -->
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <div class="section-title">Upload Video for Emotion Detection</div>
+      <label for="video">Select Video File:</label>
+      <input type="file" id="video" name="video" accept="video/*" required />
+      <button type="submit">Process Video</button>
     </form>
 
-    {% if download_ready %}
-        <h3>Processing Complete!</h3>
-        <a href="/download">Download Processed Video</a>
-    {% endif %}
+    <!-- Face Registration Section -->
+    <form id="face-form" action="/admin/add-face" method="POST" enctype="multipart/form-data" onsubmit="submitFaceForm(event)">
+      <div class="section-title">Add New Face to Database</div>
+      <label for="person_id">Person ID:</label>
+      <input type="text" id="person_id" name="person_id" placeholder="Enter person ID" required />
+      <label for="face_image">Upload Face Image:</label>
+      <input type="file" id="face_image" name="face_image" accept="image/*" required />
+      <button type="submit">Add Face</button>
+    </form>
+    <div id="face-form-response"></div>
+  </div>
+
+  <script>
+    function submitFaceForm(event) {
+      event.preventDefault();
+      var form = document.getElementById('face-form');
+      var formData = new FormData(form);
+
+      fetch('/admin/add-face', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        var respDiv = document.getElementById('face-form-response');
+        if (data.error) {
+          respDiv.style.color = "red";
+          respDiv.textContent = data.error;
+        } else if (data.message) {
+          respDiv.style.color = "green";
+          respDiv.textContent = data.message;
+          form.reset();
+        }
+      })
+      .catch(err => {
+        var respDiv = document.getElementById('face-form-response');
+        respDiv.style.color = "red";
+        respDiv.textContent = "Error adding face.";
+      });
+    }
+  </script>
 </body>
 </html>
