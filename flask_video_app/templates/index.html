@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Recognition & Emotion Detection</title>
+</head>
+<body>
+    <h2>Upload a Video for Face & Emotion Detection</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="video" accept=".mp4" required><br><br>
+        <input type="submit" value="Upload & Process">
+    </form>
+
+    {% if download_ready %}
+        <h3>Processing Complete!</h3>
+        <a href="/download">Download Processed Video</a>
+    {% endif %}
+</body>
+</html>
